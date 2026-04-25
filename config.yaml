@@ -1,7 +1,6 @@
 #This is used to fill in the model and we are using 
-provider:
-  name: "Gemini"
-  model: "Flash"
-  version: "2.0"
+model: "gemini-3-flash-preview"
+provider: "Google"
+
 
 
