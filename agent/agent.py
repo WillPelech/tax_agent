@@ -8,13 +8,6 @@ def buildClient(config:dict)->LLMClient:
         return GemeniClient(model)
     raise ValueError(f"Unsupported valueError")
 
-
-        
-
-       
-    
-
-
 def callModel():
     pass
 
