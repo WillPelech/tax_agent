@@ -1,6 +1,6 @@
 #This is used to fill in the model and we are using 
-model: "gemini-3-flash-preview"
-provider: "Google"
+model: "qwen3:0.6b"
+provider: "Qwen"
 
 
 
