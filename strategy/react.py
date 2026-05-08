@@ -44,11 +44,11 @@ class ReActStep:
         return self.final is not None
 
 
-def run(client: LLMClient, model: str, task: str, tools: dict, max_steps: int = 10):
+def run(client: LLMClient, task: str, tools: dict, max_steps: int = 10):
     transcript = [REACT_PROMPT, f"Task: {task}"]
 
     for _ in range(max_steps):
-        response = client.chat("\n".join(transcript), model)
+        response = client.chat("\n".join(transcript))
         transcript.append(response)
 
         step = ReActStep.parse(response)

@@ -1,9 +1,4 @@
-import sys 
-import logging
-
-from mcp.server import FastMCP
-import mcp.server.fastmcp 
-
+from mcp.server.fastmcp import FastMCP
 
 mcp = FastMCP("tax_tools")
 
