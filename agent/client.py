@@ -1,7 +1,9 @@
 from google import genai
 from abc import ABC
-from abc import abstractmethod 
+from abc import abstractmethod
+from typing import Any
 import ollama
+from fastmcp import ClientSession
 
 #this is an inteface that all providers should inherit
 class LLMClient(ABC):
@@ -9,6 +11,10 @@ class LLMClient(ABC):
     @abstractmethod
     def chat(self,message:str)->str:
         pass
+    @abstractmethod
+    def generate_content(self, message: str, tools: ClientSession) -> Any:
+        ...
+
 
 
 class GemeniClient(LLMClient):
@@ -21,7 +27,15 @@ class GemeniClient(LLMClient):
             contents=message
         )
         return response.text or ""
-
+    def generate_content(self,message:str,tools:ClientSession):
+        return self.client.models.generate_content(
+            model=self.model,
+            contents=message,
+            config=genai.types.GenerateContentConfig(
+                temperature=0,
+                tools=tools,  # Pass the FastMCP client session
+            )
+        )
 class QwenClient(LLMClient):
     def __init__(self, model:str):
         self.model = model
@@ -31,6 +45,7 @@ class QwenClient(LLMClient):
         messages=[{"role": "user", "content": message}]
         )
         return response.message.content or ""
-
+    def generate_content(self,message:str,tools):
+        raise NotImplementedError("QwenClient does not support tool use")
         
 
