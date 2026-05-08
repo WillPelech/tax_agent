@@ -1,4 +1,6 @@
-from mcp.server.fastmcp import FastMCP
+from app import mcp
+import tools  
 
-mcp = FastMCP("tax_tools")
+if __name__ == "__main__":
+    mcp.run("stdio")
 
