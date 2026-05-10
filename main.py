@@ -10,7 +10,7 @@ async def main():
     response = model_client.chat(base_prompt)
 
     response = model_client.generate_content(
-        "call get_file_contents tool test",
+        "Use get_file_contents to read the file at test_data/sample.txt and summarize what is in it.",
         tools=None
     )
     if isinstance(response, list):

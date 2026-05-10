@@ -1,0 +1,4 @@
+Name: John Doe
+Filing Status: Single
+W2 Income: $75,000
+Federal Tax Withheld: $10,000
