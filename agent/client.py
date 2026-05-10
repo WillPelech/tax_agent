@@ -3,7 +3,9 @@ from abc import ABC
 from abc import abstractmethod
 from typing import Any
 import ollama
-from fastmcp import ClientSession
+from qwen_agent.agents import Assistant
+from typing import List, Dict
+import os
 
 #this is an inteface that all providers should inherit
 class LLMClient(ABC):
@@ -12,8 +14,10 @@ class LLMClient(ABC):
     def chat(self,message:str)->str:
         pass
     @abstractmethod
-    def generate_content(self, message: str, tools: ClientSession) -> Any:
+    def generate_content(self, message: str, tools: Any) -> Any:
         ...
+
+
 
 
 
@@ -27,7 +31,7 @@ class GemeniClient(LLMClient):
             contents=message
         )
         return response.text or ""
-    def generate_content(self,message:str,tools:ClientSession):
+    def generate_content(self, message: str, tools: Any):
         return self.client.models.generate_content(
             model=self.model,
             contents=message,
@@ -36,16 +40,38 @@ class GemeniClient(LLMClient):
                 tools=tools,  # Pass the FastMCP client session
             )
         )
+
+
 class QwenClient(LLMClient):
     def __init__(self, model:str):
         self.model = model
+        self.llm_config = {
+            'model':model
+        }
     def chat(self,message)-> str:
         response = ollama.chat(
         model=self.model,
         messages=[{"role": "user", "content": message}]
         )
         return response.message.content or ""
-    def generate_content(self,message:str,tools):
-        raise NotImplementedError("QwenClient does not support tool use")
+    def generate_content(self, message: str, tools) -> Any:
+        server_path = os.path.abspath("mcp_server/server.py")
+        mcp_cfg = {
+            "mcpServers": {
+                "tax_tools": {
+                    "command": "python3",
+                    "args": [server_path],
+                }
+            }
+        }
+        bot = Assistant(
+            llm={"model": self.model, "model_server": "http://localhost:11434/v1", "api_key": "EMPTY"},
+            function_list=[mcp_cfg],
+        )
+        messages:List[Dict[str,str]] = [{"role": "user", "content": message}]
+        response = []
+        for response in bot.run(messages=messages):
+            pass
+        return response
         
 
