@@ -14,7 +14,7 @@ class LLMClient(ABC):
     def chat(self,message:str)->str:
         pass
     @abstractmethod
-    def generate_content(self, message: str, tools: Any) -> Any:
+    async def generate_content(self, message: str, tools: Any) -> Any:
         ...
 
 
@@ -31,13 +31,13 @@ class GemeniClient(LLMClient):
             contents=message
         )
         return response.text or ""
-    def generate_content(self, message: str, tools: Any):
-        return self.client.models.generate_content(
+    async def generate_content(self, message: str, tools: Any):
+        return await self.client.aio.models.generate_content(
             model=self.model,
             contents=message,
             config=genai.types.GenerateContentConfig(
                 temperature=0,
-                tools=tools,  # Pass the FastMCP client session
+                tools=tools,
             )
         )
 
