@@ -14,7 +14,7 @@ class LLMClient(ABC):
     def chat(self,message:str)->str:
         pass
     @abstractmethod
-    async def generate_content(self, message: str, tools: Any) -> Any:
+    async def generate_content(self, message: str, tools: Any) ->Any:
         ...
 
 

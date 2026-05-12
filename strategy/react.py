@@ -1,4 +1,6 @@
+import json
 from agent.client import LLMClient
+from registry import ToolRegistry
 
 
 REACT_PROMPT = """You are in a ReAct loop.
@@ -43,8 +45,7 @@ class ReActStep:
     def is_done(self) -> bool:
         return self.final is not None
 
-
-def run(client: LLMClient, task: str, tools: dict, max_steps: int = 10):
+async def run(client: LLMClient, task: str, tool_registry: ToolRegistry, max_steps: int = 10):
     transcript = [REACT_PROMPT, f"Task: {task}"]
 
     for _ in range(max_steps):
@@ -56,9 +57,9 @@ def run(client: LLMClient, task: str, tools: dict, max_steps: int = 10):
         if step.is_done():
             return step.final
 
-        if step.action and step.action in tools:
+        if step.action and step.action_input:
             try:
-                observation = tools[step.action](step.action_input)
+                observation = await tool_registry.call_tool(step.action, json.loads(step.action_input))
             except Exception as e:
                 observation = f"error: {e}"
         else:
