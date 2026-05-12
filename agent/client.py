@@ -1,6 +1,7 @@
 from google import genai
 from abc import ABC
 from abc import abstractmethod
+import asyncio
 from typing import Any
 import ollama
 from qwen_agent.agents import Assistant
@@ -11,7 +12,7 @@ import os
 class LLMClient(ABC):
 # TODO add tools interface
     @abstractmethod
-    def chat(self,message:str)->str:
+    async def chat(self,message:str)->str:
         pass
     @abstractmethod
     async def generate_content(self, message: str, tools: Any) ->Any:
@@ -25,8 +26,8 @@ class GemeniClient(LLMClient):
     def __init__(self,model:str):
         self.client = genai.Client()
         self.model = model
-    def chat(self, message: str) -> str:
-        response = self.client.models.generate_content(
+    async def chat(self, message: str) -> str:
+        response = await self.client.aio.models.generate_content(
             model=self.model,
             contents=message
         )
@@ -48,10 +49,11 @@ class QwenClient(LLMClient):
         self.llm_config = {
             'model':model
         }
-    def chat(self,message)-> str:
-        response = ollama.chat(
-        model=self.model,
-        messages=[{"role": "user", "content": message}]
+    async def chat(self,message)-> str:
+        response = await asyncio.to_thread(
+            ollama.chat,
+            model=self.model,
+            messages=[{"role": "user", "content": message}]
         )
         return response.message.content or ""
     def generate_content(self, message: str, tools) -> Any:

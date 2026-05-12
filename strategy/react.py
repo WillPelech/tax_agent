@@ -49,7 +49,7 @@ async def run(client: LLMClient, task: str, tool_registry: ToolRegistry, max_ste
     transcript = [REACT_PROMPT, f"Task: {task}"]
 
     for _ in range(max_steps):
-        response = client.chat("\n".join(transcript))
+        response = await client.chat("\n".join(transcript))
         transcript.append(response)
 
         step = ReActStep.parse(response)
