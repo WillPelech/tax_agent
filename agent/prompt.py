@@ -1,5 +1,4 @@
 base_prompt = "You are an ai tax agent we will be feeding tax files"
-user_prompt = ""
 REACT_PROMPT = """You are in a ReAct loop.
 
 Each turn, output exactly one block in one of these two shapes.

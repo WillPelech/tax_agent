@@ -56,7 +56,7 @@ class QwenClient(LLMClient):
             messages=[{"role": "user", "content": message}]
         )
         return response.message.content or ""
-    def generate_content(self, message: str, tools) -> Any:
+    async def generate_content(self, message: str, tools) -> Any:
         server_path = os.path.abspath("mcp_server/server.py")
         mcp_cfg = {
             "mcpServers": {

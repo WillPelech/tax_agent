@@ -1,9 +1,8 @@
 import yaml
 from agent.agent import buildClient
-from agent.prompt import base_prompt
 import asyncio
-import strategy.react 
-import agent.registry
+from strategy.react import run
+from agent.registry import McpToolRegistry
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
@@ -22,9 +21,9 @@ async def main():
     async with stdio_client(server_params) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
-            mcp_server = agent.registry.McpToolRegistry(session)
+            mcp_server = McpToolRegistry(session)
 
-            response = await strategy.react.run(model_client,user_prompt,mcp_server)
+            response = await run(model_client, user_prompt, mcp_server)
             print(response)
 
 if __name__ == "__main__":
