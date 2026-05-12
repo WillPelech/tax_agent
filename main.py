@@ -2,6 +2,8 @@ import yaml
 from agent.agent import buildClient
 from agent.prompt import base_prompt
 import asyncio
+import strategy.react 
+import agent.registry
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
@@ -15,18 +17,15 @@ async def main():
         args=["mcp_server/server.py"],
     )
 
+    user_prompt = input("What tax issues can I help you with")
+
     async with stdio_client(server_params) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
+            mcp_server = agent.registry.McpToolRegistry(session)
 
-            response = await model_client.generate_content(
-                "Use get_file_contents to read the file at test_data/sample.txt and summarize what is in it. give an in detail summary",
-                tools=[session]
-            )
-            if isinstance(response, list):
-                print(response[-1]["content"])
-            else:
-                print(response.text)
+            response = await strategy.react.run(model_client,user_prompt,mcp_server)
+            print(response)
 
 if __name__ == "__main__":
     asyncio.run(main())
