@@ -14,4 +14,11 @@ def get_file_contents(file_path: str) -> str:
         return f"invalid file type"
     return p.read_text()
 
+@mcp.tool()
+def execute_python(code:str)->str:
+    """
+    executes python code in a isolated vm use numpy to analyze data
+    """
+
+
 
