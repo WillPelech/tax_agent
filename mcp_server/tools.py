@@ -1,5 +1,7 @@
 from pathlib import Path
 from app import mcp
+import os
+import httpx 
 
 
 @mcp.tool()
@@ -19,6 +21,15 @@ def execute_python(code:str)->str:
     """
     executes python code in a isolated vm use numpy to analyze data
     """
+    url = os.getenv("SANDBOX_URL")
+    response = httpx.put(str(url),data = {'json':code})
+    response.raise_for_status()
+    return response.text
 
+
+
+    
+
+    
 
 
